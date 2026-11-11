@@ -12,6 +12,7 @@
 
 const express = require('express');
 const multer = require('multer');
+const authRoutes = require('./routes/auth.routes');
 const documentsRoutes = require('./routes/documents.routes');
 
 const app = express();
@@ -25,6 +26,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.use('/auth', authRoutes);
 app.use('/', documentsRoutes);
 
 app.use((error, _req, res, next) => {

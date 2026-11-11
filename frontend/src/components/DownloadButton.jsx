@@ -9,7 +9,7 @@ export default function DownloadButton({ document, onError }) {
 
     setIsDownloading(true);
     try {
-      const blob = await downloadDocument(document.id, document.owner);
+      const blob = await downloadDocument(document.id);
       const objectUrl = URL.createObjectURL(blob);
       const anchor = window.document.createElement('a');
       anchor.href = objectUrl;

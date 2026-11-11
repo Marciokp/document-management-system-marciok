@@ -1,24 +1,6 @@
 const documentsService = require('../services/documents.service');
 
-function getOwner(req, res) {
-  const owner = req.get('X-User-Id')?.trim();
-  if (!owner) {
-    res.status(400).json({
-      error: {
-        code: 'USER_ID_REQUIRED',
-        message: 'Informe o usuário no header X-User-Id.',
-      },
-    });
-    return null;
-  }
-
-  return owner;
-}
-
 function uploadDocument(req, res) {
-  const owner = getOwner(req, res);
-  if (!owner) return;
-
   if (!req.file) {
     res.status(400).json({
       error: {
@@ -29,21 +11,15 @@ function uploadDocument(req, res) {
     return;
   }
 
-  res.status(201).json(documentsService.createDocument(req.file, owner));
+  res.status(201).json(documentsService.createDocument(req.file, req.user.username));
 }
 
 function listDocuments(req, res) {
-  const owner = getOwner(req, res);
-  if (!owner) return;
-
-  res.json(documentsService.listDocuments(owner));
+  res.json(documentsService.listDocuments(req.user.username));
 }
 
 function downloadDocument(req, res, next) {
-  const owner = getOwner(req, res);
-  if (!owner) return;
-
-  const document = documentsService.findDocument(req.params.id, owner);
+  const document = documentsService.findDocument(req.params.id, req.user.username);
   if (!document) {
     res.status(404).json({
       error: {
@@ -73,5 +49,4 @@ module.exports = {
   downloadDocument,
   listDocuments,
   uploadDocument,
-  uploadMiddleware: documentsService.uploadMiddleware,
 };
